@@ -50,7 +50,7 @@ def interpolate_latent_space(gen, path):
             z[i * 10 + j, 0] = val_i
             z[i * 10 + j, 1] = val_j
 
-    generated = gen(z.cuda())
+    generated = gen.forward_given_samples(z.cuda())
     generated = (generated + 1) / 2
     torchvision.utils.save_image(generated.data.float(), path, nrow=10)
     ##################################################################

@@ -9,7 +9,7 @@ class UpSampleConv2D(torch.jit.ScriptModule):
         input_channels,
         kernel_size=3,
         n_filters=128,
-        upscale_factor=2,
+        upscale_factor=2.,
         padding=0,
     ):
         super(UpSampleConv2D, self).__init__()
@@ -57,10 +57,10 @@ class DownSampleConv2D(torch.jit.ScriptModule):
         # 3. Take the average across dimension 0, apply convolution,
         # and return the output
         ##################################################################
-        x = nn.PixelUnshuffle(self.downscale_ratio)(x)
+        x = F.pixel_unshuffle(x, self.downscale_ratio)
 
         batch, _, height, width = x.size()
-        x = x.view(batch, -1, self.downscale_ratio**2, height, width)
+        x = x.view(batch, -1, 4, height, width)
         x = x.permute(2, 0, 1, 3, 4)
         
         x = x.mean(dim=0)

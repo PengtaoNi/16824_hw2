@@ -123,8 +123,13 @@ def train_model(
                 # TODO 1.5 Compute the interpolated batch and run the
                 # discriminator on it.
                 ###################################################################
-                interp = None
-                discrim_interp = None
+                eta = torch.FloatTensor(train_batch.size(0),1,1,1).uniform_(0,1)
+                eta = eta.expand(train_batch.size(0), train_batch.size(1), train_batch.size(2), train_batch.size(3)).to('cuda')
+                
+                interp = eta * train_batch + (1 - eta) * generated[:train_batch.size(0)].detach()
+                interp = torch.autograd.Variable(interp, requires_grad=True).to('cuda')
+
+                discrim_interp = disc(interp)
                 ##################################################################
                 #                          END OF YOUR CODE                      #
                 ##################################################################

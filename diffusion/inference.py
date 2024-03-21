@@ -6,6 +6,7 @@ from model import DiffusionModel
 from unet import Unet
 from torchvision.utils import save_image
 from cleanfid import fid as cleanfid
+from utils import unnormalize_to_zero_to_one
 
 @torch.no_grad()
 def get_fid(gen, dataset_name, dataset_resolution, z_dimension, batch_size, num_gen):
@@ -14,7 +15,17 @@ def get_fid(gen, dataset_name, dataset_resolution, z_dimension, batch_size, num_
     # diffusion model given z
     # Note: The output must be in the range [0, 255]!
     ##################################################################
-    gen_fn = None
+    def gen_fn(z):
+        with torch.no_grad():
+            images = gen.sample_given_z(z, z.shape)
+
+        images = unnormalize_to_zero_to_one(images)
+        images = (images * 255).to(torch.uint8)
+        images = images.permute(0, 2, 3, 1)#.cpu().numpy()
+
+        return images
+    
+    gen_fn = gen_fn
     ##################################################################
     #                          END OF YOUR CODE                      #
     ##################################################################

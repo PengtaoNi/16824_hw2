@@ -147,8 +147,9 @@ class DiffusionModel(nn.Module):
         )
 
         # Step 2: Extract \alpha_{\tau_{i - 1}} and \alpha_{\tau_{i}}
+        tau_isub1 = torch.clamp(tau_isub1, min=0)
         alpha_tau_i = alphas_cumprod[tau_i]
-        alpha_tau_isub1 = alphas_cumprod[tau_isub1]# if tau_isub1 >= 0 else 0
+        alpha_tau_isub1 = alphas_cumprod[tau_isub1]
 
         # Step 3: Compute \sigma_{\tau_{i}}
         sigma_tau_i = (eta * (1 - alpha_tau_isub1) / (1 - alpha_tau_i) * self.betas[tau_isub1]).sqrt()

@@ -17,7 +17,7 @@ def get_fid(gen, dataset_name, dataset_resolution, z_dimension, batch_size, num_
     ##################################################################
     def gen_fn(z):
         with torch.no_grad():
-            images = gen.sample_given_z(z, z.shape)
+            images = gen.sample_given_z(z, (-1, 3, 32, 32))
 
         images = unnormalize_to_zero_to_one(images)
         images = (images * 255).to(torch.uint8)
